@@ -33,6 +33,8 @@ class Hamming:
 
         lista = [0] * len(self.ps)
         
+        print(data_bits, self.ps, code, lista)
+        
         
         for x in self.ps:
             code.insert(x-1, 0)
@@ -77,3 +79,6 @@ class Hamming:
         
         
 
+x = Hamming(7, 4)
+print(x.encode('1011'))
+        

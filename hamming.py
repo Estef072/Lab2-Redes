@@ -17,6 +17,12 @@ class Hamming:
         self.n = n
         self.m = m
         
+        self.ps = [x for x in range(1, self.n+1) if x & (x-1) == 0]
+    
+    def get_parity_bits(self, cadena):
+        return [cadena[i-1] for i in self.ps]
+    
+        
     def encode(self, cadena):
         
         if len(cadena) != self.m:
@@ -24,22 +30,21 @@ class Hamming:
         
         data_bits = list(map(int, list(cadena)))
         code = data_bits.copy()
-        ps = [x for x in range(1, self.n+1) if x & (x-1) == 0]        
+
+        lista = [0] * len(self.ps)
         
-        lista = [0] * len(ps)
         
-        
-        for x in ps:
+        for x in self.ps:
             code.insert(x-1, 0)
             
         for i in range(1, self.n+1):
-            for x in ps:
+            for x in self.ps:
                 if i & x == x:
-                    print(i, x, lista[ps.index(x)], code[i-1])
-                    lista[ps.index(x)] = (lista[ps.index(x)] + code[i-1]) % 2
+                    #print(i, x, lista[self.ps.index(x)], code[i-1])
+                    lista[self.ps.index(x)] = (lista[self.ps.index(x)] + code[i-1]) % 2
         
         for x in lista:
-            code[ps[lista.index(x)]-1] = x
+            code[self.ps[lista.index(x)]-1] = x
         
         return ''.join(map(str, code))
     
@@ -50,22 +55,25 @@ class Hamming:
         
         # Convert code to list of bits
         code_bits = list(map(int, list(cadena)))
+        code = code_bits.copy()
         
-        # Check parity bits
-        error_bit = 0
-        for i in range(1, self.n+1):
-            if i & (i-1) == 0:  # i is a power of 2
-                if sum(code_bits[j] for j in range(i-1, self.n, i*2)) % 2 != 0:
-                    error_bit += i
+        for x in self.ps[::-1]:
+            code.pop(x-1)
+
+        original = self.encode(''.join(map(str, code)))
+        original_parity = self.get_parity_bits(original)
+  
+        cadena_parity = self.get_parity_bits(cadena)
         
-        # Correct error if any
-        if error_bit != 0:
-            code_bits[error_bit-1] ^= 1
+        original_parity = int("".join(original_parity[::-1]),2)
+        cadena_parity = int("".join(cadena_parity[::-1]),2)
         
-        # Extract data bits
-        data_bits = [code_bits[i-1] for i in range(1, self.n+1) if i & (i-1) != 0]
+        index = original_parity^cadena_parity
         
-        return ''.join(map(str, data_bits))
+        if index:
+            code_bits[index-1] = int(not code_bits[index-1])
+                    
+        return ''.join(map(str, code_bits)), index
         
         
 

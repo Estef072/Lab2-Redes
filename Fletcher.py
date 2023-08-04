@@ -37,9 +37,7 @@ def Fletcher(blockSize: int, message:str):
     
     checksum1 = '0'*(8-len(checksum1))+checksum1
     checksum2 = '0'*(8-len(checksum2))+checksum2
-    
-    print('checksum1: ', checksum1, len(checksum1), int(checksum1, 2))
-    print('checksum2: ', checksum2, len(checksum2), int(checksum2, 2))
+
     return checksum1+checksum2
       
     
@@ -47,28 +45,56 @@ def Fletcher(blockSize: int, message:str):
 #Add checksum to message
 def SendMessage(blockSize, message):
     adder = Fletcher(blockSize, message)
+    print('- SENDER')
+    print(f'input: {message}')
+    print(f'output: {message+adder}')
     return (message+adder, blockSize)
 
 #check if checksum is correct
 def ReceiveMessage(message):
     new_message, blockSize = message
     
-    print(new_message, blockSize)
+    print('Input: ', new_message)
+        
     index = len(new_message)-(blockSize*2)
     
     checksum = new_message[index:]
     clean_message = new_message[:index]
+    
+    print('Original Message: ', clean_message)
 
     check = Fletcher(blockSize,clean_message)
+    
+    if checksum==check:
+        print('* Sin errores *')
+    else:
+        print('* Se ha encontrado un error *')
+        print('Checksum recibido: ')
+        print('-', checksum)
+        print('-', checksum[0:blockSize], '->', int(checksum[0:blockSize], 2))
+        print('-', checksum[blockSize:], '->', int(checksum[blockSize:], 2))
+        print('')
+        print('Checksum encontrado: ')
+        print('-', check)
+        print('-', check[0:blockSize], '->', int(check[0:blockSize], 2))
+        print('-', check[blockSize:], '->', int(check[blockSize:], 2))
     
     return check==checksum
 
 blockSize = 8
-prueba = "00000000111111111"
-print('prueba', len(prueba), prueba)
-print(bin(255))
+#prueba = "0100"
+#mensaje = SendMessage(blockSize, prueba)
+mensaje = ('1000000001000000000000000', blockSize)
+ReceiveMessage(mensaje)
+#000001111 -> 0000000111000011110001110
+#1001011 -> 10010111001000010010110
+#0100 ->  01110100000001000000
+numbers = []
 
-
-mensaje = SendMessage(blockSize, prueba)
-print(ReceiveMessage(mensaje))
-
+''' for i in range(1024):
+    mensaje = Fletcher(blockSize, str(bin(i))[2:])
+    if mensaje not in numbers:
+        numbers.append(mensaje)
+    else:
+        print(i, mensaje)
+        break '''

@@ -56,6 +56,10 @@ function Fletcher(blocksize, message){
 
 function sendMessage(blockSize, message){
     adder = Fletcher(blockSize, message)
+    console.log('- SENDER')
+    console.log('- input: ', message)
+    console.log('- output: ', message+adder)
+
     return [message+adder, blockSize]
 }
 
@@ -63,19 +67,42 @@ function receiveMessege(message){
     let new_message = message[0]
     let blockSize = message[1]
 
+    console.log('Input: ', new_message)
+
     index = new_message.length- (blockSize*2)
 
     checksum = new_message.slice(index)
     clean_message = new_message.slice(0, index)
 
+    console.log('Original Message: ', clean_message)
+
     check = Fletcher(blockSize, clean_message)
+
+    if(check===checksum){
+        console.log('* Sin errores * ')
+    }
+    else{
+        console.log('* Se ha encontrado un error * ')
+        console.log('Checksum recibido: ')
+        console.log('- ', checksum)
+        console.log('-', checksum.slice(0,blockSize),'->',parseInt(checksum.slice(0,blockSize), 2))
+        console.log('-', checksum.slice(blockSize,) ,'->',parseInt(checksum.slice(blockSize,),2))
+        console.log('')
+        console.log('Checksum encontrado: ')
+        console.log('- ', check)
+        console.log('-', check.slice(0,blockSize),'->',parseInt(check.slice(0,blockSize), 2))
+        console.log('-', check.slice(blockSize,) ,'->',parseInt(check.slice(blockSize,), 2))
+    }
 
     return check===checksum
 }
 
 
 const block = 8
-const prueba = "00000000111111111"
+const prueba = "00000000"
+
 
 mensaje = sendMessage(block, prueba)
-console.log(receiveMessege(mensaje))
+//mensaje = ['01110100000001000000',block]
+//console.log('- RECEPTOR')
+//receiveMessege(mensaje)

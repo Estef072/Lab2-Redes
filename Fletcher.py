@@ -85,11 +85,15 @@ blockSize = 8
 #prueba = "0100"
 #mensaje = SendMessage(blockSize, prueba)
 mensaje = ('1000000001000000000000000', blockSize)
-ReceiveMessage(mensaje)
+#ReceiveMessage(mensaje)
 #000001111 -> 0000000111000011110001110
 #1001011 -> 10010111001000010010110
 #0100 ->  01110100000001000000
 numbers = []
+
+a = "AB"
+print(''.join(format(i, 'b') for i in bytearray(a, encoding='utf-8'))
+)
 
 ''' for i in range(1024):
     mensaje = Fletcher(blockSize, str(bin(i))[2:])

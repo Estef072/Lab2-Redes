@@ -1,0 +1,24 @@
+{
+  "name": "lab2-redes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Fletcher.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Estef072/Lab2-Redes.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Estef072/Lab2-Redes/issues"
+  },
+  "homepage": "https://github.com/Estef072/Lab2-Redes#readme",
+  "dependencies": {
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2"
+  }
+}

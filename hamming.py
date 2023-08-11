@@ -19,11 +19,13 @@ class Hamming:
         
         self.ps = [x for x in range(1, self.n+1) if x & (x-1) == 0]
     
-    def get_parity_bits(self, cadena):
+    def get_parity_bits(self, cadena) -> list:
         return [cadena[i-1] for i in self.ps]
     
+    def get_data_bits(self, cadena:str or list) -> list:
+        return [cadena[i-1] for i in range(1, self.n+1) if i not in self.ps]
         
-    def encode(self, cadena):
+    def encode(self, cadena:str) -> str:
         
         if len(cadena) != self.m:
             raise ValueError("Invalid data length")
@@ -33,8 +35,7 @@ class Hamming:
 
         lista = [0] * len(self.ps)
         
-        print(data_bits, self.ps, code, lista)
-        
+        #print(data_bits, self.ps, code, lista)
         
         for x in self.ps:
             code.insert(x-1, 0)
@@ -44,13 +45,13 @@ class Hamming:
                 if i & x == x:
                     #print(i, x, lista[self.ps.index(x)], code[i-1])
                     lista[self.ps.index(x)] = (lista[self.ps.index(x)] + code[i-1]) % 2
-        
-        for x in lista:
-            code[self.ps[lista.index(x)]-1] = x
+                
+        for i, x in enumerate(lista):
+            code[self.ps[i]-1] = x
         
         return ''.join(map(str, code))
     
-    def check_hamming(self, cadena):
+    def check_hamming(self, cadena:str):
         
         if len(cadena) != self.n:
             raise ValueError("Invalid code length")
@@ -59,12 +60,10 @@ class Hamming:
         code_bits = list(map(int, list(cadena)))
         code = code_bits.copy()
         
-        for x in self.ps[::-1]:
-            code.pop(x-1)
-
+        code = self.get_data_bits(code)
+                
         original = self.encode(''.join(map(str, code)))
-        original_parity = self.get_parity_bits(original)
-  
+        original_parity = self.get_parity_bits(original)  
         cadena_parity = self.get_parity_bits(cadena)
         
         original_parity = int("".join(original_parity[::-1]),2)
@@ -76,9 +75,19 @@ class Hamming:
             code_bits[index-1] = int(not code_bits[index-1])
                     
         return ''.join(map(str, code_bits)), index
+    
+    def decode(self, cadena:str) -> str:
+        
+        cadena, index = self.check_hamming(cadena)
+        cadena = list(map(int, list(cadena)))
+        print(cadena, index)
+              
+        print(cadena)
+        cadena = self.get_data_bits(cadena)
+                
+        return ''.join(map(str, cadena))
         
         
-
 x = Hamming(7, 4)
-print(x.encode('1011'))
-        
+#print(x.encode('1011'))
+print(x.decode('0110110'))

@@ -13,6 +13,16 @@ class Hamming {
     get_parity_bits(cadena) {
         return this.ps.map(i => cadena[i-1]);
     }
+
+    getDataBits(cadena) {
+        const dataBits = [];
+        for (let i = 1; i <= cadena.length; i++) {
+          if (!this.ps.includes(i)) {
+            dataBits.push(cadena[i - 1]);
+          }
+        }
+        return dataBits;
+      }
     
     encode(cadena) {
         if (cadena.length != this.m) {
@@ -40,8 +50,8 @@ class Hamming {
             }
         }
 
-        for (let x of lista) {
-            code[this.ps[lista.indexOf(x)]-1] = x;
+        for (let [i, x] of lista.entries()) {
+            code[this.ps[i]-1] = x;
         }
     
         return code.join('');
@@ -74,16 +84,27 @@ class Hamming {
                     
         return [code_bits.join(''), index];
     }
+
+    decode(cadena) {
+        let index;
+        [cadena, index] = this.check_hamming(cadena);
+        const cadenaArray = cadena.split('').map(Number);
+        
+        const dataBits = this.getDataBits(cadenaArray);
+        
+        return dataBits.join('');
+    }
 }
 
 // Creating an instance of the Hamming class
-let hamming = new Hamming(7, 4);
+//let hamming = new Hamming(7, 4);
 
 // Encode a string
-let cadena = '1011';
-let encoded = hamming.encode(cadena);
-console.log(`Encoded: ${encoded}`);
+//let cadena = '1011';
+//let encoded = hamming.encode(cadena);
+//console.log(`Encoded: ${encoded}`);
 
 // Check the Hamming code
-let checked = hamming.check_hamming('0110011');
-console.log(`Checked: ${checked[0]}, index: ${checked[1]}`);
+//let checked = hamming.check_hamming('0110010');
+//console.log(`Checked: ${checked[0]}, index: ${checked[1]}`);
+module.exports = Hamming;

@@ -45,9 +45,6 @@ def Fletcher(blockSize: int, message:str):
 #Add checksum to message
 def SendMessage(blockSize, message):
     adder = Fletcher(blockSize, message)
-    print('- SENDER')
-    print(f'input: {message}')
-    print(f'output: {message+adder}')
     return (message+adder, blockSize)
 
 #check if checksum is correct

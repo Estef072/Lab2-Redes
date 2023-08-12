@@ -42,7 +42,7 @@ def on_chat_message(arg):
 
     if encoding == "1":  # Hamming
         print(message)
-        hamming = Hamming(args["n"]+1, args["m"])
+        hamming = Hamming(args["n"], args["m"])
         decoded = hamming.decode(message)
 
     elif encoding == "2":  # CRC
@@ -66,7 +66,30 @@ def on_chat_message(arg):
     
     print('\nMensaje recibido:', arg)
 
-sio.connect('http://localhost:3000')
+def send_message(message, encoding, noise):
+    
+    message = toBinary(message)
+    lenght = len(message)
+    args = {}
+    
+    if encoding == "1":
+        print("Largo del mensaje: ", lenght, len([x for x in range(1, lenght+1) if x & (x-1) == 0]))
+        hamming = Hamming(lenght + len([x for x in range(1, lenght+1) if x & (x-1) == 0]), lenght)
+        message = hamming.encode(message)
+        args["n"] = hamming.n
+        args["m"] = hamming.m
+        
+    elif encoding == "2":
+        """Agregar CRC-32"""
+        pass
+    else:
+        message = SendMessage(8, message)[0]
+        
+    message = add_random_noise(message, 0.001)
+
+    sio.emit('message', {"encoding":encoding,"message":message,"args":args})
+
+sio.connect('http://localhost:3001')
 while True:
     message = input("Ingrese un mensaje: ")
     encoding = 0
@@ -82,7 +105,7 @@ while True:
     args = {}
     
     if encoding == "1":
-
+        print("Largo del mensaje: ", lenght, len([x for x in range(1, lenght+1) if x & (x-1) == 0]))
         hamming = Hamming(lenght + len([x for x in range(1, lenght+1) if x & (x-1) == 0]), lenght)
         message = hamming.encode(message)
         args["n"] = hamming.n

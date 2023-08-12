@@ -25,6 +25,10 @@ app = socketio.WSGIApp(sio)
 users = {'py':None,
          'js':None}
 
+@sio.on("start")
+def start():
+    print("Se ha iniciado la comunicacion")
+
 @sio.on("connect")
 def connect(sid, environ):
     
@@ -53,7 +57,7 @@ def disconnect(sid):
 
 if __name__ == "__main__":
     import eventlet
-    eventlet.wsgi.server(eventlet.listen(("127.0.0.1", 3000)), app)
+    eventlet.wsgi.server(eventlet.listen(("127.0.0.1", 3001)), app)
 
 
 #python : 5555

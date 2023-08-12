@@ -4,7 +4,7 @@ const Hamming = require('./jshamming.js');
 const {sendMessage, receiveMessage} = require('./Fletcher.js');
 
 const {io} = require('socket.io-client');
-const socket = io("ws://localhost:3000")
+const socket = io("ws://127.0.0.1:3001")
 
 function toBinary(message) {
     return [...message]
@@ -62,13 +62,15 @@ socket.on("message", (arg)=>{
 })
 
 
-function countPowersOfTwo(number) {
-    let count = 0;
-    while (number >= 2) {
-        number /= 2;
-        count++;
+function countPowersOfTwo(cadenaz) {
+    const result = [1];
+    for (let x = 1; x <= cadenaz; x++) {
+        if ((x & (x - 1)) === 0 && x !== 1) {
+            result.push(x);
+        }
     }
-    return count;
+
+    return result.length;
 }
 
 function addRandomNoise(message, probability) {
@@ -119,6 +121,7 @@ function addRandomNoise(message, probability) {
         const args = {};
 
         if (encoding === "1") {
+            console.log("Longitud del mensaje: ", length, countPowersOfTwo(length));
             const hamming = new Hamming(length + countPowersOfTwo(length), length);
             const encodedMessage = hamming.encode(messageBinary);
             args.n = hamming.n;

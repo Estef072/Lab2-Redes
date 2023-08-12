@@ -21,6 +21,7 @@ import logging
 
 logging.basicConfig(level=logging.ERROR)
 sio = socketio.Server(cors_allowed_origins="*")
+sio.logger.setLevel(logging.ERROR)
 app = socketio.WSGIApp(sio)
 users = {'py':None,
          'js':None}
@@ -43,13 +44,16 @@ def connect(sid, environ):
 
 @sio.on("message")
 def message(sid, data):
+    if data["encoding"] == "stop":
+        print("Done")
+        return False
     if sid == users['py']:
         sio.emit("message", data, room=users['js'])
     elif sid == users['js']:
         sio.emit("message", data, room=users['py'])
     else:
         print("Usuario no encontrado")
-    print("Mensaje recibido: ", data)
+    #print("Mensaje recibido: ", data)
 
 @sio.on("disconnect")
 def disconnect(sid):

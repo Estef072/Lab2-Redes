@@ -33,10 +33,10 @@ class Hamming {
         let code = data_bits;
         let lista = Array(this.ps.length).fill(0);
     
-        console.log(`Data bits: ${data_bits}`);
-        console.log(`Parity bits: ${this.ps}`);
-        console.log(`Code bits: ${code}`)
-        console.log(`Lista: ${lista}`)
+        //console.log(`Data bits: ${data_bits}`);
+        //console.log(`Parity bits: ${this.ps}`);
+        //console.log(`Code bits: ${code}`)
+        //console.log(`Lista: ${lista}`)
 
         for (let x of this.ps) {
             code.splice(x-1, 0, 0);
@@ -58,9 +58,6 @@ class Hamming {
     }
     
     check_hamming(cadena) {
-        if (cadena.length != this.n) {
-            throw new Error("Invalid code length");
-        }
         
         let code_bits = Array.from(cadena, Number);
         let code = [...code_bits];

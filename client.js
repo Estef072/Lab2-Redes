@@ -13,7 +13,7 @@ function toBinary(message) {
 }
 
 function binaryToText(binaryString) {
-    console.log("Binary String",binaryString)
+    //console.log("Binary String",binaryString)
     const binaryChunks = binaryString.match(/.{1,8}/g);
     const textArray = binaryChunks.map(chunk => String.fromCharCode(parseInt(chunk, 2)));
     return textArray.join('');
@@ -22,6 +22,9 @@ function binaryToText(binaryString) {
 
 
 socket.on("connnect", "Conectado al servidor")
+
+let messages = 0
+let mistakes = 0
 
 socket.on("message", (arg)=>{
 
@@ -32,17 +35,25 @@ socket.on("message", (arg)=>{
     let decoded = "";
     let valid = true
 
+    //console.log(args)
+
     if (encoding == "1") { //Hamming
         let hamming = new Hamming(args.n, args.m)
         decoded = hamming.decode(message)
 
+        //console.log(args.original, decoded)
+
+        if (decoded !== args.original) {
+            //console.log("Error detectado")
+            valid = false
+        }
 
     } else if (encoding == "2") { //CRC
 
     } else if (encoding == "3") { //Fletcher
         let correct = receiveMessage([message, 8])
         if (correct ==true){
-            console.log("Ningun error detectado");
+            //console.log("Ningun error detectado");
             decoded = message.slice(0, message.length-16)
         }
         else{
@@ -52,13 +63,14 @@ socket.on("message", (arg)=>{
     } else { console.log("WTF") }
 
     if (valid==true){
-        console.log(decoded)
+        //console.log(decoded)
         output = binaryToText(decoded)
-        console.log("\nMensaje recibido", output);
+        //console.log("\nMensaje recibido:", output);
+        messages++
+    } else {
+        //console.log("Mensaje recibido con error")
+        mistakes++
     }
-
-
-
 })
 
 
@@ -74,7 +86,7 @@ function countPowersOfTwo(cadenaz) {
 }
 
 function addRandomNoise(message, probability) {
-    console.log(message);
+    //console.log(message);
     const messageArray = message.split('');
     const length = messageArray.length
     for (let i = 0; i < length; i++) {
@@ -84,7 +96,7 @@ function addRandomNoise(message, probability) {
     }
   
     const modifiedMessage = messageArray.join('');
-    console.log(modifiedMessage);
+    //console.log(modifiedMessage);
     return modifiedMessage;
   }
 
@@ -107,6 +119,14 @@ function addRandomNoise(message, probability) {
     while (true) {
         let message = await getInput("Ingrese un mensaje: ");
         let encoding = 0;
+
+        if (message === "stats") {
+            console.log("Mensajes enviados: ", messages)
+            console.log("Mensajes con error: ", mistakes)
+            messages = 0
+            mistakes = 0
+            continue;
+        }
 
         while (!['1', '2', '3'].includes(encoding)) {
             console.log("Tipo de codificación:\n");

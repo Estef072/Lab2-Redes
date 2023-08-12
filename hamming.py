@@ -54,7 +54,7 @@ class Hamming:
     def check_hamming(self, cadena:str):
         
         if len(cadena) != self.n:
-            raise ValueError("Invalid code length", cadena, len(cadena), self.n)
+            raise ValueError("Invalid code length", cadena, len(cadena))
         
         # Convert code to list of bits
         code_bits = list(map(int, list(cadena)))
@@ -80,9 +80,11 @@ class Hamming:
         
         cadena, index = self.check_hamming(cadena)
         cadena = list(map(int, list(cadena)))
-        print(cadena, index)
+        
+        #print(cadena, index)
               
-        print(cadena)
+        
+        #print(cadena)
         cadena = self.get_data_bits(cadena)
                 
         return ''.join(map(str, cadena))
@@ -90,4 +92,5 @@ class Hamming:
         
 x = Hamming(7, 4)
 #print(x.encode('1011'))
-print(x.decode('0110110'))
+
+#print(x.decode('0110110'))

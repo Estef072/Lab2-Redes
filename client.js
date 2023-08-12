@@ -24,13 +24,14 @@ function binaryToText(binaryString) {
 socket.on("connnect", "Conectado al servidor")
 
 socket.on("message", (arg)=>{
-
+    let correct = 0
     let encoding = arg.encoding
     let message = arg.message
     let args = arg.args
     let output;
     let decoded = "";
     let valid = true
+    let incorrect = 0
 
     if (encoding == "1") { //Hamming
         let hamming = new Hamming(args.n, args.m)
@@ -43,7 +44,10 @@ socket.on("message", (arg)=>{
         let correct = receiveMessage([message, 8])
         if (correct ==true){
             console.log("Ningun error detectado");
+            if (args.noise == true){
+            }
             decoded = message.slice(0, message.length-16)
+
         }
         else{
             valid = false;

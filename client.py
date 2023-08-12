@@ -1,5 +1,6 @@
 import socketio
 import random
+import string
 from hamming import Hamming
 from Fletcher import SendMessage, ReceiveMessage
 
@@ -85,13 +86,32 @@ def send_message(message, encoding, noise):
     else:
         message = SendMessage(8, message)[0]
         
-    message = add_random_noise(message, 0.001)
+    message = add_random_noise(message, noise)
 
     sio.emit('message', {"encoding":encoding,"message":message,"args":args})
 
+def generate_random_string(size):
+    characters = string.ascii_letters + string.digits
+    random_string = ''.join(random.choice(characters) for _ in range(size))
+    return random_string
+
+def test1(size, noise):
+    message = generate_random_string(size)
+    lenght = len(message)
+    args = {}
+    message = SendMessage(8, message)[0]
+    new_message = add_random_noise(new_message, noise)
+    if new_message==message:
+        args["noise"]=False
+    else:
+        args["noise"]=True
+    sio.emit('message', {"encoding":3,"message":new_message,"args":args})
+
 sio.connect('http://localhost:3001')
 while True:
-    message = input("Ingrese un mensaje: ")
+    for i in range(10_000):
+        test1(10, 0.01)
+    '''  message = input("Ingrese un mensaje: ")
     encoding = 0
     while encoding not in ['1', '2', '3']:
         print("Tipo de codificacion: \n")
@@ -120,5 +140,6 @@ while True:
 
     message = add_random_noise(message, 0.001)
     
-    sio.emit('message', {"encoding":encoding,"message":message,"args":args})
+    sio.emit('message', {"encoding":encoding,"message":message,"args":args}) '''
+
 
